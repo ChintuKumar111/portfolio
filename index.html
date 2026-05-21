@@ -352,6 +352,7 @@ footer{background:var(--bg);border-top:1px solid var(--card-border);padding:40px
           </div>
         </div>
       </div>
+    
       <div class="about-text">
         <p>Android Developer passionate about creating scalable and user-friendly mobile applications with strong focus on performance, UI/UX, API integration, real-time features, and modern mobile technologies.</p>
         <p>Experienced in building real-world applications including grocery delivery, property renting, and vehicle rental platforms. Skilled in modern Android development practices with clean architecture and modern UI frameworks.</p>
@@ -797,30 +798,71 @@ function toggleMenu(){
 }
 
 // ─── CONTACT FORM ──────────────────────────────
-function handleContact(e) {
+// Create a free Formspree form and replace this URL:
+// https://formspree.io/f/YOUR_FORM_ID
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+async function handleContact(e) {
   const btn = e.target;
-  const name    = document.getElementById('cf-name').value.trim();
-  const email   = document.getElementById('cf-email').value.trim();
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
   const subject = document.getElementById('cf-subject').value.trim();
   const message = document.getElementById('cf-message').value.trim();
 
   if (!name || !message) {
-    btn.textContent = '⚠ Please fill Name & Message';
+    btn.textContent = 'Please fill Name & Message';
     btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
-    setTimeout(() => { btn.textContent = 'Send Message ✈'; btn.style.background = ''; }, 2500);
+    setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; }, 2500);
     return;
   }
 
-  const body = `Hi Chintu,\n\nMy name is ${name}.${email ? ' You can reach me at: ' + email : ''}\n\n${message}\n\nBest regards,\n${name}`;
-  const mailSubject = subject || `Portfolio Inquiry from ${name}`;
-  const mailto = `mailto:chintudas499@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(body)}`;
+  if (FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) {
+    btn.textContent = 'Set Form ID First';
+    btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
+    setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; }, 3000);
+    return;
+  }
 
-  btn.textContent = 'Opening Email... ✉';
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
   btn.style.background = 'linear-gradient(135deg,#06d6a0,#059669)';
-  window.location.href = mailto;
 
-  setTimeout(() => { btn.textContent = 'Send Message ✈'; btn.style.background = ''; }, 3000);
+  try {
+    const response = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        subject: subject || Portfolio Inquiry from ,
+        message
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Request failed');
+    }
+
+    btn.textContent = 'Message Sent';
+    document.getElementById('cf-name').value = '';
+    document.getElementById('cf-email').value = '';
+    document.getElementById('cf-subject').value = '';
+    document.getElementById('cf-message').value = '';
+  } catch (err) {
+    btn.textContent = 'Send Failed. Try Again';
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#b91c1c)';
+  } finally {
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 2500);
+  }
 }
 </script>
 </body>
 </html>
+
