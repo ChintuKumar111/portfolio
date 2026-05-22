@@ -798,9 +798,9 @@ function toggleMenu(){
 }
 
 // ─── CONTACT FORM ──────────────────────────────
-// Create a free Formspree form and replace this URL:
-// https://formspree.io/f/YOUR_FORM_ID
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+// Sends form submissions to your inbox via FormSubmit (no backend required).
+// First submission may require email verification from FormSubmit.
+const CONTACT_ENDPOINT = 'https://formsubmit.co/ajax/chintudas499@gmail.com';
 
 async function handleContact(e) {
   const btn = e.target;
@@ -816,10 +816,10 @@ async function handleContact(e) {
     return;
   }
 
-  if (FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) {
-    btn.textContent = 'Set Form ID First';
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    btn.textContent = 'Enter a valid email';
     btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
-    setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; }, 3000);
+    setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; }, 2500);
     return;
   }
 
@@ -828,7 +828,7 @@ async function handleContact(e) {
   btn.style.background = 'linear-gradient(135deg,#06d6a0,#059669)';
 
   try {
-    const response = await fetch(FORMSPREE_ENDPOINT, {
+    const response = await fetch(CONTACT_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -837,8 +837,11 @@ async function handleContact(e) {
       body: JSON.stringify({
         name,
         email,
-        subject: subject || Portfolio Inquiry from ,
-        message
+        subject: subject || `Portfolio Inquiry from ${name}`,
+        message,
+        _subject: subject || `Portfolio Inquiry from ${name}`,
+        _captcha: 'false',
+        _template: 'table'
       })
     });
 
@@ -865,4 +868,3 @@ async function handleContact(e) {
 </script>
 </body>
 </html>
-
